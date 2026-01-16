@@ -118,21 +118,21 @@ registerApplication(
 );
 ```
 
-**패턴**: **URL로 앱 분리** (같은 브라우저 내 코드 격리, 진짜 MSA 격리 아님)
+**패턴**: **URL로 앱 분리** (브라우저 내 코드 수준 분리)
 
 #### Module Federation: "서비스 기반 컴포넌트 공유"
 
 ```typescript
 // 각 앱이 기능을 "서비스"로 제공 (MSA의 API처럼)
 
-// auth-app (서비스 제공자)
+// auth-app (서비스 제공자) = DDD의 Bounded Context
 export { LoginForm, Button }; // exposes = API 엔드포인트
 
-// main-app (서비스 소비자)
-import { LoginForm } from "authApp/LoginForm"; // REST API 호출처럼
+// main-app (서비스 소비자) = 다른 Bounded Context
+import { LoginForm } from "authApp/LoginForm"; // Context 간 통신
 ```
 
-**패턴**: **서비스 경계 기반 통합** (MSA의 API 호출과 유사한 구조)
+**패턴**: **서비스 경계 기반 통합** (DDD Bounded Context + MSA API 호출)
 
 ---
 
@@ -236,8 +236,8 @@ URL-based Application Router
 같은 브라우저에서 URL에 따라 다른 앱 실행
 Root Config = URL 라우터
 
-주의: Backend MSA처럼 "진짜 격리"는 아님
-     → 같은 브라우저, 같은 DOM, 같은 메모리
+특징: 브라우저 내에서 앱 간 코드 수준 분리
+     → 같은 브라우저, 같은 DOM, 같은 메모리 공간
 ```
 
 ### Module Federation의 정체
@@ -245,13 +245,19 @@ Root Config = URL 라우터
 ```
 Runtime Service Integrator
 = Frontend의 MSA (Micro-Services Architecture)
+= Frontend의 DDD (Domain-Driven Design)
 
 각 팀이 컴포넌트를 "서비스"로 배포
 remoteEntry.js = API Gateway
 exposes = API 엔드포인트
 import = API 호출
 
-→ Backend MSA 철학과 가장 유사한 Frontend 기술
+각 앱 = Bounded Context (도메인 경계)
+auth-app = Auth Context
+main-app = Main Context
+→ Context 간 명확한 경계와 계약 기반 통신
+
+→ Backend MSA/DDD 철학을 Frontend에 적용한 아키텍처
 ```
 
 ---
